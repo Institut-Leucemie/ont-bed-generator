@@ -1,0 +1,11 @@
+name: ont-bed-generator
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.10
+  - pip
+  # bedtools is used ONLY by the parity test (the package has no runtime dep on it)
+  - bedtools>=2.31
+  - pip:
+      - -e .[dev]

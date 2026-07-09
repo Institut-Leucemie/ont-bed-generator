@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "ont-bed-generator"
+abstract: "Generate BED files for Oxford Nanopore adaptive sampling from a gene list and a RefSeq GFF3."
+type: software
+authors:
+  - family-names: Antoniewski
+    given-names: Christophe
+    # orcid: "https://orcid.org/0000-0001-7709-2116
+license: MIT
+repository-code: "https://github.com/CHANGE-ME/ont-bed-generator"
+keywords:
+  - nanopore
+  - adaptive-sampling
+  - bioinformatics
+  - genomics

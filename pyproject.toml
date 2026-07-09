@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ont-bed-generator"
+description = "Generate BED files for Oxford Nanopore adaptive sampling from a gene list and a RefSeq GFF3."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Christophe Antoniewski" }]
+keywords = ["nanopore", "adaptive-sampling", "bed", "bioinformatics", "genomics"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Operating System :: OS Independent",
+]
+# No runtime dependencies: standard library only.
+dependencies = []
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/CHANGE-ME/ont-bed-generator"
+Issues = "https://github.com/CHANGE-ME/ont-bed-generator/issues"
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.4", "mypy>=1.8", "build>=1.2"]
+
+[project.scripts]
+ont-bed-generator = "ont_bed_generator.cli:main"
+
+# ── Versioning driven by git tags (hatch-vcs) ──
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/ont_bed_generator/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ont_bed_generator"]
+
+# ── Quality tools ──
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
