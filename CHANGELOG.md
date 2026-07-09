@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- Transparent gzip (`.gz`) support for all input files (genome, genelist, GFF,
+  Entrez map).
 
 ## [0.1.0] - TBD
 ### Added

@@ -49,9 +49,14 @@ ont-bed-generator \
    The `Chromosome` column is **ignored**: coordinates come from the GFF.
    Symbols must be **official HGNC symbols** (check them with the
    [multi-symbol checker](https://www.genenames.org/tools/multi-symbol-checker/)).
-2. **GFF3** — `gene` features only, carrying `Name=` and `Dbxref=GeneID:`
-   (e.g. T2T-CHM13v2.0 / hs1, available at
-   https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/009/914/755/GCF_009914755.1_T2T-CHM13v2.0/GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz).
+2. **GFF3** — a RefSeq GFF3 whose `gene` features carry `Name=` and
+   `Dbxref=GeneID:`. The **full NCBI annotation works as-is**: the tool reads
+   only `gene` features and ignores everything else, so pre-extracting them is
+   just an optional speed-up. Gzip-compressed (`.gz`) input is read transparently
+   (this applies to every input file). Example (T2T-CHM13v2.0 / hs1):
+   ```bash
+   curl -sO https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/009/914/755/GCF_009914755.1_T2T-CHM13v2.0/GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz
+   ```
 3. **genome sizes** — `chrom<TAB>size`, one line per chromosome, **in the
    desired sort order**. Used for telomere clamping and BED sort order.
    ```bash

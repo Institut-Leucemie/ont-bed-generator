@@ -1,16 +1,25 @@
 """Input readers: genome sizes, genelist, GFF, external Entrez table."""
 from __future__ import annotations
 
+import gzip
 from collections import defaultdict
+from typing import IO
 
 from .model import GeneSpec, GffGene
+
+
+def _open(path: str) -> IO[str]:
+    """Open a text file, transparently handling gzip-compressed (.gz) input."""
+    if str(path).endswith(".gz"):
+        return gzip.open(path, "rt")
+    return open(path)
 
 
 def read_genome(path: str) -> tuple[dict[str, int], dict[str, int]]:
     """Return (sizes, rank). `rank` = order of appearance = BED sort order."""
     sizes: dict[str, int] = {}
     rank: dict[str, int] = {}
-    with open(path) as fh:
+    with _open(path) as fh:
         for line in fh:
             line = line.rstrip("\n")
             if not line or line.startswith("#"):
@@ -38,7 +47,7 @@ def _field_int(fields: list[str], i: int) -> int:
 def read_genelist(path: str) -> list[GeneSpec]:
     """Read the genelist TSV. The Chromosome column is intentionally ignored."""
     specs: list[GeneSpec] = []
-    with open(path) as fh:
+    with _open(path) as fh:
         fh.readline()  # header
         for line in fh:
             line = line.rstrip("\n")
@@ -75,7 +84,7 @@ class GffIndex:
     @classmethod
     def load(cls, path: str) -> GffIndex:
         idx = cls()
-        with open(path) as fh:
+        with _open(path) as fh:
             for line in fh:
                 if line.startswith("#") or not line.strip():
                     continue
@@ -102,7 +111,7 @@ class GffIndex:
 def read_entrez_map(path: str) -> dict[str, str]:
     """External SYMBOL<TAB>ENTREZID table (e.g. an org.Hs.eg.db export)."""
     m: dict[str, str] = {}
-    with open(path) as fh:
+    with _open(path) as fh:
         for line in fh:
             line = line.rstrip("\n")
             if not line or line.startswith("#"):
