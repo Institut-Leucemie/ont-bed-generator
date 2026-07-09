@@ -1,3 +1,5 @@
+![CI](https://github.com/Institut-Leucemie/ont-bed-generator/actions/workflows/ci.yml/badge.svg)
+
 # ont-bed-generator
 
 Generate **BED** files for **Oxford Nanopore adaptive sampling** from a gene
