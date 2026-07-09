@@ -18,7 +18,7 @@ def resolve(
     loci: list[Locus] = []
     ambiguous: list[tuple[str, list[str]]] = []
     invalid: list[str] = []
-    seen: set[tuple] = set()
+    seen: set[tuple[str, int, int, str]] = set()
 
     for spec in specs:
         # External table first, then GFF Name=, otherwise invalid.

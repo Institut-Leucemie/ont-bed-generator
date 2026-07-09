@@ -5,6 +5,9 @@ from dataclasses import dataclass
 
 DEFAULT_FLANK = 10000
 
+# A BED6 row: (chrom, start, end, name, score, strand).
+BedRow = tuple[str, int, int, str, int, str]
+
 
 @dataclass
 class GeneSpec:

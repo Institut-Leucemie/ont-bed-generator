@@ -25,6 +25,16 @@ def read_genome(path: str) -> tuple[dict[str, int], dict[str, int]]:
     return sizes, rank
 
 
+def _field_int(fields: list[str], i: int) -> int:
+    """Parse an integer from a TSV field, defaulting to 0 when absent/empty."""
+    if len(fields) > i and fields[i].strip():
+        try:
+            return int(fields[i].strip())
+        except ValueError:
+            return 0
+    return 0
+
+
 def read_genelist(path: str) -> list[GeneSpec]:
     """Read the genelist TSV. The Chromosome column is intentionally ignored."""
     specs: list[GeneSpec] = []
@@ -39,16 +49,9 @@ def read_genelist(path: str) -> list[GeneSpec]:
             symbol = raw.strip()   # chomp whitespace/tabs (Excel habit), not a rename
             if not symbol:
                 continue
-
-            def _int(i: int) -> int:
-                if len(f) > i and f[i].strip():
-                    try:
-                        return int(f[i].strip())
-                    except ValueError:
-                        return 0
-                return 0
-
-            specs.append(GeneSpec(symbol, _int(2), _int(3), _int(4), raw))
+            specs.append(
+                GeneSpec(symbol, _field_int(f, 2), _field_int(f, 3), _field_int(f, 4), raw)
+            )
     return specs
 
 
@@ -70,7 +73,7 @@ class GffIndex:
         self.geneid_name: dict[str, str] = {}
 
     @classmethod
-    def load(cls, path: str) -> "GffIndex":
+    def load(cls, path: str) -> GffIndex:
         idx = cls()
         with open(path) as fh:
             for line in fh:

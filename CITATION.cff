@@ -6,7 +6,7 @@ type: software
 authors:
   - family-names: Antoniewski
     given-names: Christophe
-    # orcid: "https://orcid.org/0000-0001-7709-2116
+    orcid: "https://orcid.org/0000-0001-7709-2116"
 license: MIT
 repository-code: "https://github.com/CHANGE-ME/ont-bed-generator"
 keywords:

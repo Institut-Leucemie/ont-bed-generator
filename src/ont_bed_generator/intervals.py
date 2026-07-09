@@ -3,21 +3,21 @@ from __future__ import annotations
 
 from collections import defaultdict
 
-from .model import DEFAULT_FLANK, Locus
+from .model import DEFAULT_FLANK, BedRow, Locus
 
 
 def build_extended(
     loci: list[Locus],
     sizes: dict[str, int],
     flank: int = DEFAULT_FLANK,
-) -> list[tuple]:
+) -> list[BedRow]:
     """Two BED6 intervals per locus (+ / -), extended then clamped.
 
     "+" strand : [ start - flank - Left ,  end ]
     "-" strand : [ start          ,  end + flank + Right ]
     then clamped to [0, chrom_size] (equivalent to `bedtools slop -b 0`).
     """
-    out: list[tuple] = []
+    out: list[BedRow] = []
     for lo in loci:
         size = sizes.get(lo.chrom)
         if size is None:
@@ -33,7 +33,7 @@ def build_extended(
     return out
 
 
-def merge_stranded(intervals: list[tuple], rank: dict[str, int]) -> list[tuple]:
+def merge_stranded(intervals: list[BedRow], rank: dict[str, int]) -> list[BedRow]:
     """Merge per (chrom, strand): overlapping or book-ended (distance 0).
 
     names = sorted union joined by commas;
@@ -41,28 +41,29 @@ def merge_stranded(intervals: list[tuple], rank: dict[str, int]) -> list[tuple]:
     strand = preserved.
     Final sort: (genome order, start, end, strand).
     """
-    groups: dict[tuple, list] = defaultdict(list)
+    groups: dict[tuple[str, str], list[BedRow]] = defaultdict(list)
     for iv in intervals:
         groups[(iv[0], iv[5])].append(iv)
 
-    merged: list[tuple] = []
+    merged: list[BedRow] = []
     for (chrom, strand), ivs in groups.items():
         ivs.sort(key=lambda x: (x[1], x[2]))
-        cs = ce = None
+        start = end = 0
         names: set[str] = set()
         score = 0
+        has_open = False
         for _c, s, e, name, sc, _st in ivs:
-            if cs is None:
-                cs, ce, names, score = s, e, {name}, sc
-            elif s <= ce:
-                ce = max(ce, e)
+            if not has_open:
+                start, end, names, score, has_open = s, e, {name}, sc, True
+            elif s <= end:
+                end = max(end, e)
                 names.add(name)
                 score = min(score, sc)
             else:
-                merged.append((chrom, cs, ce, ",".join(sorted(names)), score, strand))
-                cs, ce, names, score = s, e, {name}, sc
-        if cs is not None:
-            merged.append((chrom, cs, ce, ",".join(sorted(names)), score, strand))
+                merged.append((chrom, start, end, ",".join(sorted(names)), score, strand))
+                start, end, names, score = s, e, {name}, sc
+        if has_open:
+            merged.append((chrom, start, end, ",".join(sorted(names)), score, strand))
 
     merged.sort(key=lambda x: (rank.get(x[0], 1 << 30), x[1], x[2], x[5]))
     return merged
