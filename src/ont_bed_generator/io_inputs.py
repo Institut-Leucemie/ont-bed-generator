@@ -24,8 +24,8 @@ def read_genome(path: str) -> tuple[dict[str, int], dict[str, int]]:
             line = line.rstrip("\n")
             if not line or line.startswith("#"):
                 continue
-            p = line.split("\t")
-            chrom, size = p[0], int(p[1])
+            fields = line.split("\t")
+            chrom, size = fields[0], int(fields[1])
             if chrom not in sizes:
                 rank[chrom] = len(rank)
             sizes[chrom] = size
@@ -53,14 +53,18 @@ def read_genelist(path: str) -> list[GeneSpec]:
             line = line.rstrip("\n")
             if not line:
                 continue
-            f = line.split("\t")
-            raw = f[1] if len(f) > 1 else ""
+            fields = line.split("\t")
+            raw = fields[1] if len(fields) > 1 else ""
             symbol = raw.strip()   # chomp whitespace/tabs (Excel habit), not a rename
             if not symbol:
                 continue
-            specs.append(
-                GeneSpec(symbol, _field_int(f, 2), _field_int(f, 3), _field_int(f, 4), raw)
-            )
+            specs.append(GeneSpec(
+                symbol,
+                _field_int(fields, 2),
+                _field_int(fields, 3),
+                _field_int(fields, 4),
+                raw,
+            ))
     return specs
 
 
@@ -88,19 +92,19 @@ class GffIndex:
             for line in fh:
                 if line.startswith("#") or not line.strip():
                     continue
-                c = line.rstrip("\n").split("\t")
-                if len(c) < 9 or c[2] != "gene":
+                fields = line.rstrip("\n").split("\t")
+                if len(fields) < 9 or fields[2] != "gene":
                     continue
-                a = _attrs(c[8])
+                a = _attrs(fields[8])
                 entrez = None
                 for tok in a.get("Dbxref", "").split(","):
                     if tok.startswith("GeneID:"):
                         entrez = tok.split(":", 1)[1]
                         break
                 name = a.get("Name") or a.get("gene") or ""
-                g = GffGene(c[0], int(c[3]), int(c[4]), c[6], entrez, name)
+                g = GffGene(fields[0], int(fields[3]), int(fields[4]), fields[6], entrez, name)
                 # Without a GeneID, fall back to a synthetic key so nothing is lost.
-                key = entrez if entrez is not None else f"NONAME:{name}:{c[0]}:{c[3]}"
+                key = entrez if entrez is not None else f"NONAME:{name}:{fields[0]}:{fields[3]}"
                 idx.by_geneid[key].append(g)
                 idx.geneid_name.setdefault(key, name)
                 if name:
@@ -116,7 +120,7 @@ def read_entrez_map(path: str) -> dict[str, str]:
             line = line.rstrip("\n")
             if not line or line.startswith("#"):
                 continue
-            p = line.split("\t")
-            if len(p) >= 2 and p[0].strip() and p[1].strip():
-                m[p[0].strip()] = p[1].strip()
+            fields = line.split("\t")
+            if len(fields) >= 2 and fields[0].strip() and fields[1].strip():
+                m[fields[0].strip()] = fields[1].strip()
     return m
