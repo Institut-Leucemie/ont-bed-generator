@@ -51,7 +51,7 @@ def resolve(
             seen.add(key)
             loci.append(
                 Locus(g.chrom, start0, g.end, out_name,
-                      spec.extended, spec.left, spec.right)
+                      spec.left, spec.right)
             )
 
     return Resolution(loci, ambiguous, invalid)

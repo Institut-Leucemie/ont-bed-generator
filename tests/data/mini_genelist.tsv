@@ -1,6 +1,6 @@
-Chromosome	Gene	Extended_region	Left_extension_size_pb	Right_extension_size_pb	Comment
-1	GENEA 	0			
-1	GENEB	0			
-23	PARG	0			
-1	DUP	0			
-1	NOPE	0			
+Gene	Left_extension_bp	Right_extension_bp
+GENEA 	0	0
+GENEB	0	0
+PARG	0	0
+DUP	0	0
+NOPE	0	0

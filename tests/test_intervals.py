@@ -29,7 +29,7 @@ def _pipeline(genelist, gff, genome, flank):
 def test_clamp_to_chrom_end():
     # locus near the telomere: the "-" extension must be clamped to chrom size
     sizes = {"c": 100}
-    loci = [Locus("c", 80, 90, "G", 0, 0, 0)]
+    loci = [Locus("c", 80, 90, "G", 0, 0)]
     plus, minus = build_extended(loci, sizes, flank=50)
     assert minus[2] == 100, "right extension must be clamped to chrom size"
     assert plus[1] == 30, "80 - 50 = 30, no negative clamp here"
@@ -37,7 +37,7 @@ def test_clamp_to_chrom_end():
 
 def test_clamp_negative_start_to_zero():
     sizes = {"c": 100}
-    loci = [Locus("c", 10, 20, "G", 0, 0, 0)]
+    loci = [Locus("c", 10, 20, "G", 0, 0)]
     plus, _ = build_extended(loci, sizes, flank=50)
     assert plus[1] == 0, "10 - 50 must be clamped to 0"
 

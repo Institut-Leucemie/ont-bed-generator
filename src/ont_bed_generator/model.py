@@ -11,12 +11,15 @@ BedRow = tuple[str, int, int, str, int, str]
 
 @dataclass
 class GeneSpec:
-    """One genelist row (cleaned symbol plus extension parameters)."""
+    """One genelist row: symbol plus per-side extension sizes (bp)."""
     symbol: str
-    extended: int
     left: int
     right: int
-    raw_symbol: str
+
+    @property
+    def extended(self) -> int:
+        """Derived flag: a region is 'extended' if it has a custom L/R size."""
+        return 1 if (self.left or self.right) else 0
 
 
 @dataclass
@@ -37,9 +40,13 @@ class Locus:
     start: int
     end: int
     name: str          # canonical GFF Name=
-    extended: int
     left: int
     right: int
+
+    @property
+    def extended(self) -> int:
+        """Derived flag: a region is 'extended' if it has a custom L/R size."""
+        return 1 if (self.left or self.right) else 0
 
 
 @dataclass

@@ -44,10 +44,12 @@ ont-bed-generator \
 
 ### Inputs
 
-1. **genelist TSV** — columns `Chromosome | Gene | Extended_region |
-   Left_extension_size_pb | Right_extension_size_pb | Comment`.
-   The `Chromosome` column is **ignored**: coordinates come from the GFF.
-   Symbols must be **official HGNC symbols** (check them with the
+1. **genelist TSV** — columns `Gene | Left_extension_bp | Right_extension_bp`,
+   with an (auto-detected) header row. Coordinates come from the GFF, so no
+   chromosome column is needed; a gene is treated as an extended region when
+   Left or Right is non-zero (no separate flag). A bare `Gene` line (no
+   extensions) is valid and gets only the default flank. Symbols must be
+   **official HGNC symbols** (check them with the
    [multi-symbol checker](https://www.genenames.org/tools/multi-symbol-checker/)).
 2. **GFF3** — a RefSeq GFF3 whose `gene` features carry `Name=` and
    `Dbxref=GeneID:`. The **full NCBI annotation works as-is**: the tool reads

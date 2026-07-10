@@ -10,6 +10,11 @@ versioning: [SemVer](https://semver.org/).
   Entrez map).
 
 ### Changed
+- **Breaking:** simplified the genelist format to three columns
+  `Gene | Left_extension_bp | Right_extension_bp` (dropped the Chromosome,
+  Extended_region and Comment columns). The extended-region flag is now derived
+  (a gene is extended iff Left or Right is non-zero); a header row is
+  auto-detected. Existing six-column lists must be converted.
 - Output BEDs are now sorted in canonical karyotypic order (chr1..chrN, then
   X, Y, then M/MT, contigs last), organism-agnostic. The genome file's line
   order no longer affects the output; `read_genome` returns sizes only and the

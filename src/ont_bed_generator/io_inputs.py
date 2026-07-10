@@ -40,27 +40,35 @@ def _field_int(fields: list[str], i: int) -> int:
     return 0
 
 
+def _is_header_row(fields: list[str]) -> bool:
+    """A header has a header-word first cell, or non-numeric size columns."""
+    if fields[0].strip().lower() in {"gene", "symbol", "gene_symbol", "genes"}:
+        return True
+    return any(c.strip() and not c.strip().isdigit() for c in fields[1:3])
+
+
 def read_genelist(path: str) -> list[GeneSpec]:
-    """Read the genelist TSV. The Chromosome column is intentionally ignored."""
+    """Read the genelist TSV: columns Gene, Left_extension_bp, Right_extension_bp.
+
+    A gene counts as an extended region iff Left or Right is non-zero, so no
+    separate flag column is needed; a bare `Gene` line (no extension columns) is
+    valid and gets only the default flank. A header row, if present, is detected
+    and skipped.
+    """
     specs: list[GeneSpec] = []
     with _open(path) as fh:
-        fh.readline()  # header
-        for line in fh:
-            line = line.rstrip("\n")
-            if not line:
-                continue
-            fields = line.split("\t")
-            raw = fields[1] if len(fields) > 1 else ""
-            symbol = raw.strip()   # chomp whitespace/tabs (Excel habit), not a rename
-            if not symbol:
-                continue
-            specs.append(GeneSpec(
-                symbol,
-                _field_int(fields, 2),
-                _field_int(fields, 3),
-                _field_int(fields, 4),
-                raw,
-            ))
+        rows = [line.rstrip("\n") for line in fh]
+    start = 1 if rows and _is_header_row(rows[0].split("\t")) else 0
+    for line in rows[start:]:
+        if not line:
+            continue
+        fields = line.split("\t")
+        symbol = fields[0].strip()   # chomp whitespace/tabs (Excel habit)
+        if not symbol:
+            continue
+        left = _field_int(fields, 1)
+        right = _field_int(fields, 2)
+        specs.append(GeneSpec(symbol, left, right))
     return specs
 
 

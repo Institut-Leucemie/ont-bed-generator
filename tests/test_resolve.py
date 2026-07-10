@@ -44,6 +44,6 @@ def test_entrez_map_takes_priority(gff_path):
     from ont_bed_generator import GeneSpec
     gff = GffIndex.load(str(gff_path))
     # force PARG to target GeneID 1 (GENEA) via the external table
-    res = resolve([GeneSpec("PARG", 0, 0, 0, "PARG")], gff, entrez_map={"PARG": "1"})
+    res = resolve([GeneSpec("PARG", 0, 0)], gff, entrez_map={"PARG": "1"})
     assert [lo.chrom for lo in res.loci] == ["chr1"]
     assert res.loci[0].name == "GENEA"
