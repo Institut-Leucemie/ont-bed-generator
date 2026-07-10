@@ -18,12 +18,12 @@ from ont_bed_generator.model import Locus
 
 
 def _pipeline(genelist, gff, genome, flank):
-    sizes, rank = read_genome(str(genome))
+    sizes = read_genome(str(genome))
     specs = read_genelist(str(genelist))
     idx = GffIndex.load(str(gff))
     res = resolve(specs, idx)
-    merged = merge_stranded(build_extended(res.loci, sizes, flank), rank)
-    return res, merged, rank
+    merged = merge_stranded(build_extended(res.loci, sizes, flank))
+    return res, merged
 
 
 def test_clamp_to_chrom_end():
@@ -43,7 +43,7 @@ def test_clamp_negative_start_to_zero():
 
 
 def test_strand_specific_merge_expected(genelist_path, gff_path, genome_path):
-    _res, merged, _rank = _pipeline(genelist_path, gff_path, genome_path, flank=100)
+    _res, merged = _pipeline(genelist_path, gff_path, genome_path, flank=100)
     expected = [
         ("chr1", 900, 2500, "GENEA,GENEB", 0, "+"),
         ("chr1", 1000, 2600, "GENEA,GENEB", 0, "-"),
@@ -60,7 +60,7 @@ def test_strand_specific_merge_expected(genelist_path, gff_path, genome_path):
 def test_bedtools_merge_parity(tmp_path, genelist_path, gff_path, genome_path):
     """Pure-Python merge must equal `bedtools merge -s` on lexicographically
     sorted input (the correct reference; cf. the genome-order artifact)."""
-    sizes, rank = read_genome(str(genome_path))
+    sizes = read_genome(str(genome_path))
     specs = read_genelist(str(genelist_path))
     idx = GffIndex.load(str(gff_path))
     res = resolve(specs, idx)
@@ -82,5 +82,5 @@ def test_bedtools_merge_parity(tmp_path, genelist_path, gff_path, genome_path):
         c = line.split("\t")
         bt.add((c[0], int(c[1]), int(c[2]), c[3], int(c[4]), c[5]))
 
-    mine = set(merge_stranded(ext, rank))
+    mine = set(merge_stranded(ext))
     assert mine == bt

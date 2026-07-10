@@ -4,6 +4,7 @@ from __future__ import annotations
 from collections import defaultdict
 
 from .model import DEFAULT_FLANK, BedRow, Locus
+from .ordering import chrom_sort_key
 
 
 def build_extended(
@@ -33,13 +34,13 @@ def build_extended(
     return out
 
 
-def merge_stranded(intervals: list[BedRow], rank: dict[str, int]) -> list[BedRow]:
+def merge_stranded(intervals: list[BedRow]) -> list[BedRow]:
     """Merge per (chrom, strand): overlapping or book-ended (distance 0).
 
     names = sorted union joined by commas;
     score = minimum of the Extended_region flags;
     strand = preserved.
-    Final sort: (genome order, start, end, strand).
+    Final sort: canonical karyotypic order, then start, end, strand.
     """
     groups: dict[tuple[str, str], list[BedRow]] = defaultdict(list)
     for iv in intervals:
@@ -65,5 +66,5 @@ def merge_stranded(intervals: list[BedRow], rank: dict[str, int]) -> list[BedRow
         if has_open:
             merged.append((chrom, start, end, ",".join(sorted(names)), score, strand))
 
-    merged.sort(key=lambda x: (rank.get(x[0], 1 << 30), x[1], x[2], x[5]))
+    merged.sort(key=lambda x: (chrom_sort_key(x[0]), x[1], x[2], x[5]))
     return merged

@@ -15,23 +15,19 @@ def _open(path: str) -> IO[str]:
     return open(path)
 
 
-def read_genome(path: str) -> tuple[dict[str, int], dict[str, int]]:
-    """Return (sizes, rank). `rank` = order of appearance = BED sort order."""
+def read_genome(path: str) -> dict[str, int]:
+    """Return chromosome sizes {name: length} (used for telomere clamping)."""
     sizes: dict[str, int] = {}
-    rank: dict[str, int] = {}
     with _open(path) as fh:
         for line in fh:
             line = line.rstrip("\n")
             if not line or line.startswith("#"):
                 continue
             fields = line.split("\t")
-            chrom, size = fields[0], int(fields[1])
-            if chrom not in sizes:
-                rank[chrom] = len(rank)
-            sizes[chrom] = size
+            sizes[fields[0]] = int(fields[1])
     if not sizes:
         raise ValueError(f"empty/unreadable genome file: {path}")
-    return sizes, rank
+    return sizes
 
 
 def _field_int(fields: list[str], i: int) -> int:

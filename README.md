@@ -57,8 +57,9 @@ ont-bed-generator \
    ```bash
    curl -sO https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/009/914/755/GCF_009914755.1_T2T-CHM13v2.0/GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz
    ```
-3. **genome sizes** — `chrom<TAB>size`, one line per chromosome, **in the
-   desired sort order**. Used for telomere clamping and BED sort order.
+3. **genome sizes** — `chrom<TAB>size`, one line per chromosome. Used for
+   telomere clamping only; the line order does not matter (output BEDs are
+   sorted in canonical karyotypic order).
    ```bash
    curl -sO https://hgdownload.soe.ucsc.edu/goldenPath/hs1/bigZips/hs1.chrom.sizes
    ```

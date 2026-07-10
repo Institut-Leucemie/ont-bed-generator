@@ -9,6 +9,12 @@ versioning: [SemVer](https://semver.org/).
 - Transparent gzip (`.gz`) support for all input files (genome, genelist, GFF,
   Entrez map).
 
+### Changed
+- Output BEDs are now sorted in canonical karyotypic order (chr1..chrN, then
+  X, Y, then M/MT, contigs last), organism-agnostic. The genome file's line
+  order no longer affects the output; `read_genome` returns sizes only and the
+  internal `rank` ordering was removed in favour of `ordering.chrom_sort_key`.
+
 ## [0.1.0] - TBD
 ### Added
 - Generation of `targets.bed` and `merged-extended.bed`.
