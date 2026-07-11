@@ -28,7 +28,6 @@ class GffGene:
     chrom: str
     start1: int
     end: int
-    strand: str
     entrez: str | None
     name: str
 

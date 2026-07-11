@@ -106,7 +106,7 @@ class GffIndex:
                         entrez = tok.split(":", 1)[1]
                         break
                 name = a.get("Name") or a.get("gene") or ""
-                g = GffGene(fields[0], int(fields[3]), int(fields[4]), fields[6], entrez, name)
+                g = GffGene(fields[0], int(fields[3]), int(fields[4]), entrez, name)
                 # Without a GeneID, fall back to a synthetic key so nothing is lost.
                 key = entrez if entrez is not None else f"NONAME:{name}:{fields[0]}:{fields[3]}"
                 idx.by_geneid[key].append(g)
