@@ -84,3 +84,37 @@ def test_bedtools_merge_parity(tmp_path, genelist_path, gff_path, genome_path):
 
     mine = set(merge_stranded(ext))
     assert mine == bt
+
+
+# --- Structural invariants: hold for ANY input, not tied to fixed coordinates ---
+
+def _assert_no_residual_overlap(rows):
+    from collections import defaultdict
+    groups: dict = defaultdict(list)
+    for chrom, s, e, _name, _score, strand in rows:
+        groups[(chrom, strand)].append((s, e))
+    for (chrom, strand), ivs in groups.items():
+        ivs.sort()
+        for (s1, e1), (s2, e2) in zip(ivs, ivs[1:], strict=False):
+            assert e1 < s2, f"residual overlap on {chrom}{strand}: [{s1},{e1}) vs [{s2},{e2})"
+
+
+def test_merge_leaves_no_residual_overlap(genelist_path, gff_path, genome_path):
+    """The core guarantee: after per-strand merging nothing still overlaps
+    (this is exactly the invariant the Galaxy/bedtools workflow violated)."""
+    _res, merged = _pipeline(genelist_path, gff_path, genome_path, flank=100)
+    _assert_no_residual_overlap(merged)
+
+
+def test_extended_within_chrom_bounds(genelist_path, gff_path, genome_path):
+    """Every interval is well-formed (start < end) and clamped to [0, size]."""
+    sizes = read_genome(str(genome_path))
+    _res, merged = _pipeline(genelist_path, gff_path, genome_path, flank=100)
+    for chrom, s, e, _n, _sc, _st in merged:
+        assert 0 <= s < e <= sizes[chrom], f"out-of-bounds {chrom}:[{s},{e}) size={sizes[chrom]}"
+
+
+def test_merge_is_idempotent(genelist_path, gff_path, genome_path):
+    """Re-merging an already-merged set changes nothing."""
+    _res, merged = _pipeline(genelist_path, gff_path, genome_path, flank=100)
+    assert merge_stranded(list(merged)) == merged
