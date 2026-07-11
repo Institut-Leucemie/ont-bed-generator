@@ -16,7 +16,7 @@ def test_gzipped_gff_matches_plain(tmp_path, gff_path):
     _gzip_copy(gff_path, gz)
     plain = GffIndex.load(str(gff_path))
     zipped = GffIndex.load(str(gz))
-    assert set(zipped.by_geneid) == set(plain.by_geneid)
+    assert set(zipped.geneid_to_features) == set(plain.geneid_to_features)
     assert zipped.name_to_geneids == plain.name_to_geneids
 
 

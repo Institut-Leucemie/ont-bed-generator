@@ -36,7 +36,7 @@ def resolve(
             continue
 
         gid = next(iter(geneids))
-        recs = gff.by_geneid.get(gid, [])
+        recs = gff.geneid_to_features.get(gid, [])
         if not recs:
             invalid.append(spec.symbol)
             continue

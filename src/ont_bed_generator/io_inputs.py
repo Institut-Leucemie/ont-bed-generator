@@ -85,9 +85,8 @@ class GffIndex:
     """Index of GFF `gene` features, keyed on Entrez (GeneID)."""
 
     def __init__(self) -> None:
-        self.by_geneid: dict[str, list[GffGene]] = defaultdict(list)
+        self.geneid_to_features: dict[str, list[GffGene]] = defaultdict(list)
         self.name_to_geneids: dict[str, set[str]] = defaultdict(set)
-        self.geneid_name: dict[str, str] = {}
 
     @classmethod
     def load(cls, path: str) -> GffIndex:
@@ -109,8 +108,7 @@ class GffIndex:
                 g = GffGene(fields[0], int(fields[3]), int(fields[4]), entrez, name)
                 # Without a GeneID, fall back to a synthetic key so nothing is lost.
                 key = entrez if entrez is not None else f"NONAME:{name}:{fields[0]}:{fields[3]}"
-                idx.by_geneid[key].append(g)
-                idx.geneid_name.setdefault(key, name)
+                idx.geneid_to_features[key].append(g)
                 if name:
                     idx.name_to_geneids[name].add(key)
         return idx
