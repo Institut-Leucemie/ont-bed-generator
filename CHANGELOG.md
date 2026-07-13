@@ -27,3 +27,25 @@ versioning: [SemVer](https://semver.org/).
   (GFF `Name=`), handling pseudoautosomal regions and IG/TCR loci.
 - Reporting of invalid / ambiguous symbols (`--strict`).
 - Unit tests + optional `bedtools merge` parity test.
+
+## [0.2.0] - 2026-07-12
+
+### Added
+- Transparent gzip (`.gz`) support for input files.
+- Structural invariant tests (no residual overlap within a (chrom, strand)
+  group, intervals within [0, chrom_size], idempotent merging).
+
+### Changed
+- **Breaking — genelist format** simplified to `Gene | Left_extension_bp |
+  Right_extension_bp` with an auto-detected header; the extended-region flag is
+  now derived (Left or Right non-zero). Dropped the Chromosome, Extended_region
+  and Comment columns.
+- Output BEDs sorted in canonical karyotypic order, independent of the genome
+  file's line order (`read_genome` returns sizes only; ordering via
+  `ordering.chrom_sort_key`).
+- Split-line variable unified to `fields` across readers.
+- `GffIndex.by_geneid` renamed to `geneid_to_features`; `extended` is now a
+  computed property on `GeneSpec`/`Locus`.
+
+### Removed
+- Dead internal state: `GffGene.strand` and the never-read `geneid_name` index.
