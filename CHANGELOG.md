@@ -47,3 +47,18 @@ versioning: [SemVer](https://semver.org/).
 
 ### Removed
 - Dead internal state: `GffGene.strand` and the never-read `geneid_name` index.
+
+## [0.3.0] - 2026-07-13
+
+### Added
+- **Annotation dataset build pipeline** (`annotation/`). A scripted, reproducible
+  chain (`build_gene_gff.sh`) that derives a gene-feature-only, `chr`-named GFF3
+  for T2T-CHM13v2.0 from the official NCBI RefSeq release (RS_2025_08): it keeps
+  only `gene` features, renames RefSeq accessions to `chr` names via the
+  assembly report, and restores the pseudoautosomal chrX copy of *P2RY8*
+  (absent from the NCBI build) from the curated `NM_178129.5` coordinates under
+  the shared `GeneID:286530`, so *P2RY8* resolves on both chrX and chrY like
+  *CRLF2*. The built asset is archived on Zenodo
+  (DOI [10.5281/zenodo.21341240](https://doi.org/10.5281/zenodo.21341240)); the
+  pipeline and its documentation live in `annotation/`. No change to the package
+  code or CLI.
