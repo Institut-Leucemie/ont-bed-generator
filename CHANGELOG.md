@@ -62,3 +62,9 @@ versioning: [SemVer](https://semver.org/).
   (DOI [10.5281/zenodo.21341240](https://doi.org/10.5281/zenodo.21341240)); the
   pipeline and its documentation live in `annotation/`. No change to the package
   code or CLI.
+
+## [0.4.0] - 2026-07-14
+
+### Added
+- **Automated PiPy publishing workflow** (`.github/workflows/release.yml`).
+
