@@ -15,9 +15,16 @@ Given a list of target genes and a GFF3 annotation, the tool produces:
 
 ## Installation
 
+From [PyPI](https://pypi.org/project/ont-bed-generator/) (recommended):
+
 ```bash
-# from source
-git clone https://github.com/CHANGE-ME/ont-bed-generator.git
+pip install ont-bed-generator
+```
+
+From source:
+
+```bash
+git clone https://github.com/Institut-Leucemie/ont-bed-generator.git
 cd ont-bed-generator
 pip install .
 ```
@@ -84,8 +91,12 @@ ruff check .
 mypy
 ```
 
-Versioning is driven by git tags (`hatch-vcs`): a release is
-`git tag vX.Y.Z && git push --tags`.
+Versioning is driven by git tags (`hatch-vcs`). A release is two separate
+steps (see `.github/workflows/release.yml`):
+
+1. push an annotated tag — `git tag -a vX.Y.Z -m "X.Y.Z" && git push origin vX.Y.Z` —
+   which publishes to **TestPyPI**;
+2. publish a GitHub Release on that tag, which publishes to **PyPI**.
 
 ## Intentional differences from the original Galaxy workflow
 
