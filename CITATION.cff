@@ -8,7 +8,7 @@ authors:
     given-names: Christophe
     orcid: "https://orcid.org/0000-0001-7709-2116"
 license: MIT
-repository-code: "https://github.com/CHANGE-ME/ont-bed-generator"
+repository-code: "https://github.com/Institut-Leucemie/ont-bed-generator"
 keywords:
   - nanopore
   - adaptive-sampling
